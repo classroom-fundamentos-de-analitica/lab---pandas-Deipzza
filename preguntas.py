@@ -189,7 +189,8 @@ def pregunta_10():
 
     tbl0_10 = tbl0[['_c1', '_c2']].copy()
     tbl0_10 = tbl0_10.groupby('_c1').apply(formateo).to_frame().reset_index()
-    tbl0_10.rename(columns={0: '_c1', '_c1': '_c0'}, inplace=True)
+    tbl0_10.rename(columns={0: '_c2', '_c1': '_c1'}, inplace=True)
+    tbl0_10.set_index('_c1', inplace=True)
 
     return tbl0_10
 
