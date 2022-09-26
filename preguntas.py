@@ -262,4 +262,11 @@ def pregunta_13():
     E    275
     Name: _c5b, dtype: int64
     """
-    return
+
+    tbl0_13 = tbl0.copy()
+    tbl2_13 = tbl2.copy()
+
+    tbl_joined = pd.merge(tbl0_13, tbl2_13, on='_c0')
+    tbl_joined_grouped = tbl_joined.groupby('_c1').sum()['_c5b']
+
+    return tbl_joined_grouped
