@@ -22,7 +22,9 @@ def pregunta_01():
     40
 
     """
-    return
+
+
+    return len(tbl0)
 
 
 def pregunta_02():
@@ -33,7 +35,7 @@ def pregunta_02():
     4
 
     """
-    return
+    return len(tbl0.columns)
 
 
 def pregunta_03():
@@ -50,7 +52,10 @@ def pregunta_03():
     Name: _c1, dtype: int64
 
     """
-    return
+    tbl0_conteo = tbl0.groupby('_c1').count()
+    tbl0_conteo = pd.Series(tbl0_conteo['_c0'].rename('_c1'))
+
+    return tbl0_conteo
 
 
 def pregunta_04():
@@ -65,7 +70,9 @@ def pregunta_04():
     E    4.785714
     Name: _c2, dtype: float64
     """
-    return
+    tbl0_conteo = tbl0.groupby('_c1').mean()['_c2']
+
+    return tbl0_conteo
 
 
 def pregunta_05():
@@ -82,7 +89,9 @@ def pregunta_05():
     E    9
     Name: _c2, dtype: int64
     """
-    return
+    tbl0_conteo = tbl0.groupby('_c1').max()['_c2']
+
+    return tbl0_conteo
 
 
 def pregunta_06():
@@ -94,7 +103,10 @@ def pregunta_06():
     ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
     """
-    return
+    tbl1_u = list(x.upper() for x in tbl1['_c4'].unique())
+    tbl1_u.sort()
+
+    return tbl1_u
 
 
 def pregunta_07():
@@ -110,7 +122,9 @@ def pregunta_07():
     E    67
     Name: _c2, dtype: int64
     """
-    return
+    tbl0_suma = tbl0.groupby('_c1').sum()['_c2']
+
+    return tbl0_suma
 
 
 def pregunta_08():
@@ -128,7 +142,10 @@ def pregunta_08():
     39   39   E    5  1998-01-26    44
 
     """
-    return
+    tbl0_suma = tbl0.copy()
+    tbl0_suma['suma'] = pd.Series([x + y for x, y in zip(tbl0['_c0'], tbl0['_c2'])])
+
+    return tbl0_suma
 
 
 def pregunta_09():
@@ -146,7 +163,10 @@ def pregunta_09():
     39   39   E    5  1998-01-26  1998
 
     """
-    return
+    tbl0_yr = tbl0.copy()
+    tbl0_yr['year'] = pd.Series([x.split('-')[0] for x in tbl0_yr['_c3']])
+
+    return tbl0_yr
 
 
 def pregunta_10():
@@ -163,7 +183,16 @@ def pregunta_10():
     3   D                  1:2:3:5:5:7
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
-    return
+    def formateo(df):
+        cadena = sorted([str(x) for x in df['_c2']])
+        return ':'.join(cadena)
+
+    tbl0_10 = tbl0[['_c1', '_c2']].copy()
+    tbl0_10 = tbl0_10.groupby('_c1').apply(formateo).to_frame().reset_index()
+    tbl0_10.rename(columns={0: '_c2', '_c1': '_c1'}, inplace=True)
+    tbl0_10.set_index('_c1', inplace=True)
+
+    return tbl0_10
 
 
 def pregunta_11():
@@ -182,7 +211,15 @@ def pregunta_11():
     38   38      d,e
     39   39    a,d,f
     """
-    return
+    def formateo(df):
+        cadena = sorted([str(x) for x in df['_c4']])
+        return ','.join(cadena)
+
+    tbl1_format = tbl1.copy()
+    tbl1_format = tbl1_format.groupby('_c0').apply(formateo).to_frame().reset_index()
+    tbl1_format.rename(columns={0: '_c4'}, inplace=True)
+
+    return tbl1_format
 
 
 def pregunta_12():
@@ -200,7 +237,15 @@ def pregunta_12():
     38   38                    eee:0,fff:9,iii:2
     39   39                    ggg:3,hhh:8,jjj:5
     """
-    return
+    def formateo(df):
+        cadena = sorted([str(x) + ':' + str(y) for x, y in zip(df['_c5a'], df['_c5b'])])
+        return ','.join(cadena)
+
+    tbl2_format = tbl2.copy()
+    tbl2_format = tbl2_format.groupby('_c0').apply(formateo).to_frame().reset_index()
+    tbl2_format.rename(columns={0: '_c5'}, inplace=True)
+
+    return tbl2_format
 
 
 def pregunta_13():
@@ -217,4 +262,11 @@ def pregunta_13():
     E    275
     Name: _c5b, dtype: int64
     """
-    return
+
+    tbl0_13 = tbl0.copy()
+    tbl2_13 = tbl2.copy()
+
+    tbl_joined = pd.merge(tbl0_13, tbl2_13, on='_c0')
+    tbl_joined_grouped = tbl_joined.groupby('_c1').sum()['_c5b']
+
+    return tbl_joined_grouped
